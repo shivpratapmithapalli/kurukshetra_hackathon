@@ -17,7 +17,7 @@ import { BlockCode, TextAreaFns, VoidCustomDropdownBox, VoidInputBox2, VoidSlide
 import { ModelDropdown, } from '../void-settings-tsx/ModelDropdown.js';
 import { PastThreadsList } from './SidebarThreadSelector.js';
 import { VOID_CTRL_L_ACTION_ID } from '../../../actionIDs.js';
-import { VOID_OPEN_SETTINGS_ACTION_ID } from '../../../voidSettingsPane.js';
+
 import { ChatMode, displayInfoOfProviderName, FeatureName, isFeatureNameDisabled } from '../../../../../../../workbench/contrib/void/common/voidSettingsTypes.js';
 import { ICommandService } from '../../../../../../../platform/commands/common/commands.js';
 import { WarningBox } from '../void-settings-tsx/WarningBox.js';
@@ -3046,7 +3046,7 @@ export const SidebarChat = () => {
 					showDismiss={true}
 				/>
 
-				<WarningBox className='text-sm my-2 mx-4' onClick={() => { commandService.executeCommand(VOID_OPEN_SETTINGS_ACTION_ID) }} text='Open settings' />
+
 			</div>
 		}
 	</ScrollToBottomContainer>
