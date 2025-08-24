@@ -18,7 +18,14 @@ const OVERRIDE_VALUE = false
 export const VoidOnboarding = () => {
 
 	const voidSettingsState = useSettingsState()
-	const isOnboardingComplete = voidSettingsState.globalSettings.isOnboardingComplete || OVERRIDE_VALUE
+
+	// Check if Gemini is already configured
+	const isGeminiConfigured = voidSettingsState.settingsOfProvider.gemini.apiKey &&
+		voidSettingsState.settingsOfProvider.gemini.apiKey.length > 0 &&
+		voidSettingsState.settingsOfProvider.gemini.models.length > 0
+
+	// Skip onboarding if Gemini is configured or if onboarding was previously completed
+	const isOnboardingComplete = isGeminiConfigured || voidSettingsState.globalSettings.isOnboardingComplete || OVERRIDE_VALUE
 
 	const isDark = useIsDark()
 
@@ -95,26 +102,17 @@ const FadeIn = ({ children, className, delayMs = 0, durationMs, ...props }: { ch
 //  New AddProvidersPage Component and helpers
 // =============================================
 
-const tabNames = ['Free', 'Paid', 'Local'] as const;
+const tabNames = ['Free'] as const;
 
-type TabName = typeof tabNames[number] | 'Cloud/Other';
+type TabName = typeof tabNames[number];
 
-// Data for cloud providers tab
-const cloudProviders: ProviderName[] = ['googleVertex', 'liteLLM', 'microsoftAzure', 'awsBedrock', 'openAICompatible'];
-
-// Data structures for provider tabs
+// Data structures for provider tabs - only Gemini
 const providerNamesOfTab: Record<TabName, ProviderName[]> = {
-	Free: ['gemini', 'openRouter'],
-	Local: localProviderNames,
-	Paid: providerNames.filter(pn => !(['gemini', 'openRouter', ...localProviderNames, ...cloudProviders] as string[]).includes(pn)) as ProviderName[],
-	'Cloud/Other': cloudProviders,
+	Free: ['gemini'],
 };
 
 const descriptionOfTab: Record<TabName, string> = {
-	Free: `Providers with a 100% free tier. Add as many as you'd like!`,
-	Paid: `Connect directly with any provider (bring your own key).`,
-	Local: `Active providers should appear automatically. Add as many as you'd like! `,
-	'Cloud/Other': `Add as many as you'd like! Reach out for custom configuration requests.`,
+	Free: `Add Gemini API to get started with CodeShetra!`,
 };
 
 
@@ -154,7 +152,7 @@ const AddProvidersPage = ({ pageIndex, setPageIndex }: { pageIndex: number, setP
 		<div className="md:w-1/4 w-full flex flex-col gap-6 p-6 border-none border-void-border-2 h-full overflow-y-auto">
 			{/* Tab Selector */}
 			<div className="flex md:flex-col gap-2">
-				{[...tabNames, 'Cloud/Other'].map(tab => (
+				{tabNames.map(tab => (
 					<button
 						key={tab}
 						className={`py-2 px-4 rounded-md text-left ${currentTab === tab
@@ -193,7 +191,7 @@ const AddProvidersPage = ({ pageIndex, setPageIndex }: { pageIndex: number, setP
 
 		{/* Right Column */}
 		<div className="flex-1 flex flex-col items-center justify-start p-6 h-full overflow-y-auto">
-			<div className="text-5xl mb-2 text-center w-full">Add a Provider</div>
+			<div className="text-5xl mb-2 text-center w-full">ADD LLM API</div>
 
 			<div className="w-full max-w-xl mt-4 mb-10">
 				<div className="text-4xl font-light my-4 w-full">{currentTab}</div>
@@ -212,14 +210,6 @@ const AddProvidersPage = ({ pageIndex, setPageIndex }: { pageIndex: number, setP
 								className="ml-1 text-xs align-top text-blue-400"
 							>*</span>
 						)}
-						{providerName === 'openRouter' && (
-							<span
-								data-tooltip-id="void-tooltip-provider-info"
-								data-tooltip-content="OpenRouter offers 50 free messages a day, and 1000 if you deposit $10. Only applies to models labeled ':free'."
-								data-tooltip-place="right"
-								className="ml-1 text-xs align-top text-blue-400"
-							>*</span>
-						)}
 					</div>
 					<div>
 						<SettingsForProvider providerName={providerName} showProviderTitle={false} showProviderSuggestions={true} />
@@ -229,20 +219,7 @@ const AddProvidersPage = ({ pageIndex, setPageIndex }: { pageIndex: number, setP
 				</div>
 			))}
 
-			{(currentTab === 'Local' || currentTab === 'Cloud/Other') && (
-				<div className="w-full max-w-xl mt-8 bg-void-bg-2/50 rounded-lg p-6 border border-void-border-4">
-					<div className="flex items-center gap-2 mb-4">
-						<div className="text-xl font-medium">Models</div>
-					</div>
 
-					{currentTab === 'Local' && (
-						<div className="text-sm opacity-80 text-void-fg-3 my-4 w-full">Local models should be detected automatically. You can add custom models below.</div>
-					)}
-
-					{currentTab === 'Local' && <ModelDump filteredProviders={localProviderNames} />}
-					{currentTab === 'Cloud/Other' && <ModelDump filteredProviders={cloudProviders} />}
-				</div>
-			)}
 
 
 
@@ -584,19 +561,28 @@ const VoidOnboardingContent = () => {
 		}
 	}, []);
 
-	// reset the page to page 0 if the user redos onboarding
+	// Check if Gemini is configured and auto-complete onboarding
 	useEffect(() => {
-		if (!voidSettingsState.globalSettings.isOnboardingComplete) {
+		const isGeminiConfigured = voidSettingsState.settingsOfProvider.gemini.apiKey &&
+			voidSettingsState.settingsOfProvider.gemini.apiKey.length > 0 &&
+			voidSettingsState.settingsOfProvider.gemini.models.length > 0
+
+		if (isGeminiConfigured && !voidSettingsState.globalSettings.isOnboardingComplete) {
+			// Auto-complete onboarding if Gemini is configured
+			voidSettingsService.setGlobalSetting('isOnboardingComplete', true);
+			voidMetricsService.capture('Auto-Completed Onboarding - Gemini Configured', { providerName: 'gemini' })
+		} else if (!voidSettingsState.globalSettings.isOnboardingComplete) {
+			// Reset to page 0 if onboarding is not complete
 			setPageIndex(0)
 		}
-	}, [setPageIndex, voidSettingsState.globalSettings.isOnboardingComplete])
+	}, [setPageIndex, voidSettingsState.globalSettings.isOnboardingComplete, voidSettingsState.settingsOfProvider.gemini, voidSettingsService, voidMetricsService])
 
 
 	const contentOfIdx: { [pageIndex: number]: React.ReactNode } = {
 		0: <OnboardingPageShell
 			content={
 				<div className='flex flex-col items-center gap-8'>
-					<div className="text-5xl font-light text-center">Welcome to Void</div>
+					<div className="text-5xl font-light text-center">Welcome to CodeShetra</div>
 
 					{/* Slice of Void image */}
 					<div className='max-w-md w-full h-[30vh] mx-auto flex items-center justify-center'>
