@@ -121,7 +121,7 @@ Registry.as<IViewContainersRegistry>(ViewContainerExtensions.ViewContainersRegis
 		order: 4,
 		rejectAddedViews: true,
 		alwaysUseContainerInfo: true,
-	}, ViewContainerLocation.Sidebar);
+	}, ViewContainerLocation.Sidebar, { doNotRegisterOpenCommand: true, isDefault: false });
 
 Registry.as<IConfigurationRegistry>(ConfigurationExtensions.Configuration)
 	.registerConfiguration({

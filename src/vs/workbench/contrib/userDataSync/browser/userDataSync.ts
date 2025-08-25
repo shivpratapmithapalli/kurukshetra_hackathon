@@ -1209,7 +1209,7 @@ export class UserDataSyncWorkbenchContribution extends Disposable implements IWo
 				),
 				icon: SYNC_VIEW_ICON,
 				hideIfEmpty: true,
-			}, ViewContainerLocation.Sidebar);
+			}, ViewContainerLocation.Sidebar, { doNotRegisterOpenCommand: true, isDefault: false });
 	}
 
 	private registerResetSyncDataAction(): void {

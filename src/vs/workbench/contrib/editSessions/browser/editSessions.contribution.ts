@@ -278,7 +278,7 @@ export class EditSessionsContribution extends Disposable implements IWorkbenchCo
 				),
 				icon: EDIT_SESSIONS_VIEW_ICON,
 				hideIfEmpty: true
-			}, ViewContainerLocation.Sidebar, { doNotRegisterOpenCommand: true }
+			}, ViewContainerLocation.Sidebar, { doNotRegisterOpenCommand: true, isDefault: false }
 		);
 		this._register(this.instantiationService.createInstance(EditSessionsDataViews, container));
 	}

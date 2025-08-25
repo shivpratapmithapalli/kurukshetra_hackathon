@@ -271,7 +271,7 @@ export const VIEW_CONTAINER: ViewContainer = viewContainerRegistry.registerViewC
 		keybindings: { primary: KeyMod.CtrlCmd | KeyMod.Shift | KeyCode.KeyE },
 		order: 0
 	},
-}, ViewContainerLocation.Sidebar, { isDefault: true });
+}, ViewContainerLocation.Sidebar, { isDefault: true, doNotRegisterOpenCommand: true });
 
 const openFolder = localize('openFolder', "Open Folder");
 const addAFolder = localize('addAFolder', "add a folder");

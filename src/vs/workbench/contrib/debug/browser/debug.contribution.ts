@@ -435,7 +435,7 @@ const viewContainer = Registry.as<IViewContainersRegistry>(ViewExtensions.ViewCo
 	icon: icons.runViewIcon,
 	alwaysUseContainerInfo: true,
 	order: 3,
-}, ViewContainerLocation.Sidebar);
+}, ViewContainerLocation.Sidebar, { doNotRegisterOpenCommand: true, isDefault: false });
 
 // Register default debug views
 const viewsRegistry = Registry.as<IViewsRegistry>(ViewExtensions.ViewsRegistry);

@@ -7,11 +7,11 @@ import { defineConfig } from 'tsup'
 
 export default defineConfig({
 	entry: [
-		'./src2/codeshetra-editor-widgets-tsx/index.tsx',
+		'./src2/void-editor-widgets-tsx/index.tsx',
 		'./src2/sidebar-tsx/index.tsx',
-		'./src2/codeshetra-settings-tsx/index.tsx',
-		'./src2/codeshetra-tooltip/index.tsx',
-		'./src2/codeshetra-onboarding/index.tsx',
+		'./src2/void-settings-tsx/index.tsx',
+		'./src2/void-tooltip/index.tsx',
+		'./src2/void-onboarding/index.tsx',
 		'./src2/quick-edit-tsx/index.tsx',
 		'./src2/diff/index.tsx',
 	],

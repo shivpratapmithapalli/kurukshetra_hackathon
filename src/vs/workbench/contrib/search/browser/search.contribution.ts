@@ -59,7 +59,7 @@ const viewContainer = Registry.as<IViewContainersRegistry>(ViewExtensions.ViewCo
 	hideIfEmpty: true,
 	icon: searchViewIcon,
 	order: 1,
-}, ViewContainerLocation.Sidebar, { doNotRegisterOpenCommand: true });
+}, ViewContainerLocation.Sidebar, { doNotRegisterOpenCommand: true, isDefault: false });
 
 const viewDescriptor: IViewDescriptor = {
 	id: VIEW_ID,
